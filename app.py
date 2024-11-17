@@ -169,6 +169,9 @@ def register():
         items = []
         purchases = []
         
+        #convert password into hashed password
+        password = generate_password_hash(password)
+        
         # Insert new user into MongoDB
         mongo.db.users.insert_one({
             'username': username, 
@@ -196,14 +199,16 @@ def login():
         username = request.form.get('username')
         password = request.form.get('password')
         
-        user = mongo.db.users.find_one({"username": username, "password": password})
+        user = mongo.db.users.find_one({"username": username})
         
         if user:
-            session['logged_in'] = True
-            session['username'] = username
-            return redirect(url_for('index'))
-        else:
-            return redirect(url_for('login'))
+            password_match = check_password_hash(user['password'], password)
+            if password_match:
+                session['logged_in'] = True
+                session['username'] = username
+                return redirect(url_for('index'))
+            else:
+                return redirect(url_for('login'))
     
     return render_template('login.html')
 
