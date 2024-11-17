@@ -191,6 +191,11 @@ form label, form input, form button {
     padding: 10px 10px;
 }
 
+form button {
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
 button {
     background-color: #4a90e2; /* Vibrant blue */
     color: white;
