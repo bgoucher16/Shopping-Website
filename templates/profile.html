@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profile</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+</head>
+<body>
+    <header>
+        <h1>Shopping Website</h1>
+        
+        <!-- Home link and categories -->
+        <div class="nav-categories">
+            <a href="{{ url_for('index') }}" class="home-link" style="margin-left: 3rem;">Home</a>
+            <ul class="category-list">
+                <li>
+                    <a href="{{ url_for('technology') }}" class="{% if category == selected_category %}active{% endif %}">Technology</a>
+                    <a href="{{ url_for('clothing') }}" class="{% if category == selected_category %}active{% endif %}">Clothing</a>
+                    <a href="{{ url_for('living') }}" class="{% if category == selected_category %}active{% endif %}">Home and Living</a>
+                    <a href="{{ url_for('sports') }}" class="{% if category == selected_category %}active{% endif %}">Sports</a>
+                </li>
+            </ul>
+        </div>
+    
+        <!-- User navigation -->
+        <nav class="user-nav">
+            {% if session.get('logged_in') %}
+                <span>Welcome, <a href="{{ url_for('profile') }}">{{session['username'] }}!</a></span>
+                <a href="{{ url_for('logout') }}">Logout</a>
+            {% else %}
+                <a href="{{ url_for('login') }}">Login</a>
+                <a href="{{ url_for('register') }}">Register</a>
+            {% endif %}
+        </nav>
+
+        <div class="cart-icon">
+            <a href="{{ url_for('cart') }}"><i class="fas fa-shopping-cart"></i></a>
+        </div>
+    </header>
+
+    <main>
+        <div class="profile-container">
+            <div class="profile-header">
+                <h1>Hello, {{ user.firstName }}</h1>
+                <h3>Purchases:</h3>
+                {% if purchases %}
+                <div class="cart-grid">
+                    {% for item in purchases %}
+                        <div class="cart-item">
+                            <h3>{{ item['name'] }}</h3>
+                            <p>{{ item['description'] }}</p>
+                            <p>Quantity: {{ item['stock'] }}</p>
+                            <p>Item Number: {{ item['item_number'] }}</p>
+                            <p>Price: ${{ item['price'] }}</p>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+            </div>
+            <p>Total spent: ${{ rounded }}</p>
+        </div>
+    </main>
+</body>
+</html>

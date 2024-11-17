@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shopping Website</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+</head>
+<body>
+    <header>
+        <h1>Shopping Website</h1>
+        
+        <!-- Home link and categories -->
+        <div class="nav-categories">
+            <a href="{{ url_for('index') }}" class="home-link" style="margin-left: 3rem;">Home</a>
+            <ul class="category-list">
+                <li>
+                    <a href="{{ url_for('technology') }}" class="{% if category == selected_category %}active{% endif %}">Technology</a>
+                    <a href="{{ url_for('clothing') }}" class="{% if category == selected_category %}active{% endif %}">Clothing</a>
+                    <a href="{{ url_for('living') }}" class="{% if category == selected_category %}active{% endif %}">Home and Living</a>
+                    <a href="{{ url_for('sports') }}" class="{% if category == selected_category %}active{% endif %}">Sports</a>
+                </li>
+            </ul>
+        </div>
+    
+        <!-- User navigation -->
+        <nav class="user-nav">
+            {% if session.get('logged_in') %}
+                <span>Welcome, <a href="{{ url_for('profile') }}">{{session['username'] }}!</a></span>
+                <a href="{{ url_for('logout') }}">Logout</a>
+            {% else %}
+                <a href="{{ url_for('login') }}">Login</a>
+                <a href="{{ url_for('register') }}">Register</a>
+            {% endif %}
+        </nav>
+
+        <div class="cart-icon">
+            <a href="{{ url_for('cart') }}"><i class="fas fa-shopping-cart"></i>{{ total }}</a>
+        </div>
+    </header>
+
+    <div class="sidebar">
+
+        {% if selected_category %}
+            <h3>Item Types in {{ selected_category }}</h3>
+            <ul>
+                {% for item_type in item_types %}
+                    <li>
+                        <a href="{{ url_for('category_item_type', category_name=selected_category, item_type=item_type['type']) }}">
+                            {{ item_type['type'] }} ({{ item_type['count'] }})
+                        </a>
+                    </li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+    </div>
+
+    <main>
+        <h2>Items</h2>
+        <div class="item-grid">
+            {% for item in items %}
+                <div class="item">
+                    <h3>{{ item['name'] }}</h3>
+                    <p>{{ item['description'] }}</p>
+                    <p>In stock: {{ item['stock'] }}</p>
+                    <p>Price: ${{ item['price'] }}</p>
+                    <img src="{{ item['image_url'] }}" alt="">Image</img><br>
+                    <form action="{{ url_for('add_to_cart') }}" method="post" class="buy-button">
+                        <input type="hidden" name="item_id" value="{{ item['_id'] }}">
+                        <button type="submit">Buy</button>
+                    </form>
+                </div>
+            {% endfor %}
+        </div>
+    </main>
+</body>
+</html>

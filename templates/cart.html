@@ -1,0 +1,59 @@
+<!-- cart.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Your Cart</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+    <header>
+        <h1>Your Cart</h1>
+        <a href="{{ url_for('index') }}">Continue Shopping</a>
+    </header>
+    
+    <main>
+        {% if cart_items %}
+            <div class="cart-grid">
+                {% for item in cart_items %}
+                    <div class="cart-item">
+                        <h3>{{ item['name'] }}</h3>
+                        <p>{{ item['description'] }}</p>
+                        <p>Quantity: {{ item['stock'] }}</p>
+                        <p>Item Number: {{ item['item_number'] }}</p>
+                        <p>Price: ${{ item['price'] }}</p>
+                        <form action="{{ url_for('remove') }}" method="post">
+                            <input type="hidden" name="item_id" value="{{ item['_id'] }}">
+                            <button type="submit">Remove</button>
+                        </form>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <p>Your cart is empty.</p>
+            <h2 class="continue-shopping"><a href="{{ url_for('index') }}">Continue Shopping</a></h2>
+        {% endif %}
+    </main>
+    <form action="{{ url_for('checkout') }}" method="post">
+        <input type="hidden" name="items" value="{{ cartItems }}">
+        <button type="submit">Purchase</button>
+    </form>
+
+    {% if message %}
+    <div id="out-of-stock-message" data-message="{{ message }}" style="display: none;"></div>
+    {% endif %}
+
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            // Grab the out-of-stock message from the hidden div
+            const messageDiv = document.getElementById("out-of-stock-message");
+            if (messageDiv) {
+                const message = messageDiv.getAttribute("data-message");
+                if (message) {
+                    alert(message); // Show the message in an alert
+                }
+            }
+        });
+    </script>
+</body>
+</html>
