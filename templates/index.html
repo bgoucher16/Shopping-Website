@@ -63,13 +63,17 @@
                 <div class="item">
                     <h3>{{ item['name'] }}</h3>
                     <p>{{ item['description'] }}</p>
-                    <p>In stock: {{ item['stock'] }}</p>
+                    {% if item['stock'] == 0 %}
+                        <p>Item Out of stock</p>
+                    {% else %}
+                        <p>In stock: {{ item['stock'] }}</p>
                     <p>Price: ${{ item['price'] }}</p>
                     <img src="{{ item['image_url'] }}" alt="">Image</img><br>
                     <form action="{{ url_for('add_to_cart') }}" method="post" class="buy-button">
                         <input type="hidden" name="item_id" value="{{ item['_id'] }}">
                         <button type="submit">Buy</button>
                     </form>
+                    {% endif %}
                 </div>
             {% endfor %}
         </div>

@@ -14,7 +14,7 @@ app.config["MONGO_URI"] = "mongodb://localhost:27017/shopping_website"  # Update
 mongo = PyMongo(app)
 
 # Set a secret key for session management
-app.secret_key = 'your_secret_key_here'
+app.secret_key = os.getenv("SECRET_KEY")
 
 @app.route("/api/get-key")
 def get_key():
