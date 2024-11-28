@@ -40,27 +40,32 @@
         </div>
     </header>
 
-    <main>
-        <div class="profile-container">
-            <div class="profile-header">
-                <h1>Hello, {{ user.firstName }}</h1>
-                <h3>Purchases:</h3>
-                {% if purchases %}
-                <div class="cart-grid">
-                    {% for item in purchases %}
-                        <div class="cart-item">
-                            <h3>{{ item['name'] }}</h3>
-                            <p>{{ item['description'] }}</p>
-                            <p>Quantity: {{ item['stock'] }}</p>
-                            <p>Item Number: {{ item['item_number'] }}</p>
-                            <p>Price: ${{ item['price'] }}</p>
-                        </div>
-                    {% endfor %}
-                </div>
-            {% endif %}
-            </div>
-            <p>Total spent: ${{ rounded }}</p>
+    <div class="profile-container">
+        <div class="profile-header">
+            <h1>Hello, {{ user.firstName }}</h1>
+            <h3>Purchases:</h3>
         </div>
+    </div>
+
+    <main>
+        {% if purchases %}
+            <div class="cart-grid">
+                {% for item in purchases %}
+                    <div class="cart-item">
+                        <h3>{{ item['name'] }}</h3>
+                        <p>{{ item['description'] }}</p>
+                        <p>Item Number: {{ item['item_number'] }}</p>
+                        <p>Price: ${{ item['price'] }}</p>
+                        <form action="{{ url_for('return_item') }}" method="post">
+                            <input type="hidden" name="item_id" value="{{ item['_id'] }}">
+                            <button type="submit">Return</button>
+                        </form> 
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+        <br>
+        <p>Total spent: ${{ rounded }}</p>
     </main>
 </body>
 </html>

@@ -123,6 +123,42 @@ def checkout():
         )
 
         return redirect(url_for("index"))
+    
+@app.route("/return-item", methods=["POST"])
+def return_item():
+    if request.method == "POST":
+        item_id = request.form.get("item_id")
+        username = session.get("username")
+        
+        if not item_id or not username:
+            return "Invalid request", 400  # Handle missing data gracefully
+        
+        # Retrieve the user and item
+        user = mongo.db.users.find_one({"username": username})
+        item = mongo.db.items.find_one({"_id": ObjectId(item_id)})
+        
+        if not user or not item:
+            return "User or item not found", 404  # Handle missing user or item
+        
+        # Check if the item is in the user's purchases by ID
+        if item_id in [str(purchase["_id"]) for purchase in user.get("purchases", [])]:
+            # Remove the item from user's purchases
+            mongo.db.users.update_one(
+                {"username": username},
+                {"$pull": {"purchases": {"_id": ObjectId(item_id)}}}
+            )
+            # Increment the stock of the item
+            mongo.db.items.update_one(
+                {"_id": ObjectId(item_id)},
+                {"$inc": {"stock": 1}}
+            )
+            return redirect(url_for("profile"))
+        else:
+            return "Item not found in user purchases", 400  # Item not in user's purchases
+            
+    
+    
+    
 
         
 @app.route("/cart")
